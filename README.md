@@ -22,6 +22,17 @@
 
 ---
 
+## Installation
+Bash only:
+``` bash
+git clone https://github.com/Kasper100/qpm.git
+mv qpm .qpm
+cd .qpm
+./install.sh
+qpm -V
+```
+---
+
 ## Usage
 
 ```bash
