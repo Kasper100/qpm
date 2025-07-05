@@ -1,4 +1,3 @@
-// TODO: learn Go!
 package main
 
 import (
