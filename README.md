@@ -4,17 +4,21 @@
 
 `qpm` is a minimalist wrapper for Arch Linux’s `pacman`, built to streamline package management with quiet, clean output. No clutter, no noise — just packages.
 
-> ✨ *0.0.1 (Cheers)* — first version, named after how I felt building it.
+---
+
+## WARNING
+### THIS PROJECT WAS MADE TO LEARN GOLANG. 
+### EXPECT BUGS
 
 ---
 
 ## Features
 
 * 🛠 Install, remove, and update packages quietly
-* 📆 Install/remove packages from `.qpm` files (space or newline format)
-* 🧘 Minimal terminal output — no distractions
+* 📜 Install/remove packages from `.qpm` files (space or newline format)
+* 🤫 Minimal terminal output — no distractions
 * 🔀 Use `--yay` to switch to `yay` for AUR support
-* 🤪 `--out` flag to show raw pacman/yay output (debugging)
+* 🖥 `--out` flag to show raw pacman/yay output (debugging)
 
 ---
 
