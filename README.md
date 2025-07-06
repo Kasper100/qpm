@@ -21,7 +21,12 @@
 * 🖥 `--out` flag to show raw pacman/yay output (debugging)
 
 ---
-
+## Requirement
+* bash
+* golang / go
+``` bash
+sudo pacman -S go bash
+```
 ## Installation
 Bash only:
 ``` bash
