@@ -1,4 +1,4 @@
-# qpm — Quiet Pacman
+# qpm — Quiet PacMan
 
 > **Made for minimalism.**
 
