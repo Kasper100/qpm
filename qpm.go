@@ -10,8 +10,8 @@ import (
 	"syscall"
 )
 
-var versionnumbers = "0.0.1" // still 0.0.1, because its not released yet
-var versionname = "Cheers"   // random name related to how i felt
+var versionnumbers = "0.0.2"
+var versionname = "Bored" // random name related to how i felt
 var version = versionnumbers + " (" + versionname + ")"
 
 func showversion() {
@@ -24,7 +24,6 @@ Quiet PacMan: Made for `
 	fmt.Printf(banner+"\x1b[4mminimalism\x1b[0m\n", version)
 }
 
-// thanks chatgpt 👍👍
 func containsString(slice []string, value string) bool {
 	for _, v := range slice {
 		if v == value {
@@ -80,15 +79,35 @@ func TranslateFileToPKGS(file *os.File) []string {
 	return words
 }
 
+func CreateQPMFile(pkgs []string, filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return fmt.Errorf("error creating file: %w", err)
+	}
+	defer file.Close()
+
+	for _, pkg := range pkgs {
+		_, err := file.WriteString(pkg + "\n")
+		if err != nil {
+			return fmt.Errorf("error writing to file: %w", err)
+		}
+	}
+	fmt.Printf("Created .qpm file: %s\n", filename)
+	return nil
+}
+
 func showhelp() {
 	fmt.Println("Usage: qpm [command] [packages]")
 	fmt.Println("Commands:")
 	fmt.Println("  -S <pkgs>     Install packages")
 	fmt.Println("  -R <pkgs>     Remove packages")
 	fmt.Println("  -U            Update system")
-	fmt.Println("  -?            Search for packages")
+	fmt.Println("  -? <query>    Search for packages")
+	fmt.Println("  -O            List all orphan packages")
+	fmt.Println("  -Q            List all installed packages")
 	fmt.Println("  -F            Download packages from a .qpm file")
 	fmt.Println("  -RF           Remove packages from a .qpm file")
+	fmt.Println("  -CF <pkgs>    Creates a .qpm from list packages")
 	fmt.Println("  -V            Shows qpm version")
 	fmt.Println("  -H            Show this help message")
 	fmt.Println("Options:")
@@ -145,9 +164,9 @@ func main() {
 		}
 		returnedstr := ""
 		if len(pkgs) > 1 {
-			returnedstr = "\nThe packages are installed"
+			returnedstr = "\n\x1b[47;30mThe packages are installed\x1b[0m"
 		} else {
-			returnedstr = "\nThe package is installed"
+			returnedstr = "\n\x1b[47;30mThe package is installed\x1b[0m"
 		}
 		fmt.Printf("Installing packages: %s\n", strings.Join(pkgs, ", "))
 		usepac("-S", pkgs, returnedstr, pkgmanager, showoutput)
@@ -158,9 +177,9 @@ func main() {
 		}
 		returnedstr := ""
 		if len(pkgs) > 1 {
-			returnedstr = "\nThe packages are removed"
+			returnedstr = "\n\x1b[47;30mThe packages are removed\x1b[0m"
 		} else {
-			returnedstr = "\nThe package is removed"
+			returnedstr = "\n\x1b[47;30mThe package is removed\x1b[0m"
 		}
 		fmt.Printf("Removing packages: %s\n", strings.Join(pkgs, ", "))
 		usepac("-Rns", pkgs, returnedstr, pkgmanager, showoutput)
@@ -173,10 +192,18 @@ func main() {
 		returnedstr := "\n\x1b[47;30mSearch results are above\x1b[0m"
 		fmt.Printf("Searching packages: %s\n", strings.Join(pkgs, ", "))
 		usepac("-Ss", pkgs, returnedstr, pkgmanager, showoutput)
+	case "-O":
+		// list all orphan packages
+		returnedstr := "\n\x1b[47;30mOrphan packages listed above\x1b[0m"
+		fmt.Println("Listing all orphan packages...")
+		usepac("-Qdtq", []string{}, returnedstr, pkgmanager, true)
 	case "-U":
 		fmt.Println("Updating system...")
 		returnedstr := "\n\x1b[47;30mSystem updated\x1b[0m"
 		usepac("-Syu", []string{}, returnedstr, pkgmanager, showoutput)
+	case "-Q":
+		returnstr := "\x1b[47;30mInstalled packages listed above\x1b[0m"
+		usepac("-Qq", []string{}, returnstr, pkgmanager, true)
 	case "-F":
 		if len(pkgs) == 0 {
 			fmt.Println("No packages provided. Please provide packages to download from a .qpm file.")
@@ -213,6 +240,14 @@ func main() {
 		}
 		fmt.Printf("Removing packages from file: %s\n", TranslatedPKGS)
 		usepac("-Rns", TranslatedPKGS, fmt.Sprintf(returnedstr, pkgs[0]), pkgmanager, showoutput)
+	case "-CF":
+		if len(pkgs) == 0 {
+			fmt.Println("No packages provided. Please provide packages to create a .qpm file.")
+			return
+		}
+		filename := "qpmpackages.qpm"
+		CreateQPMFile(pkgs, filename)
+		fmt.Printf("\x1b[47;30mCreated .qpm file with packages: %s\x1b[0m\n", strings.Join(pkgs, ", "))
 	case "-H":
 		showhelp()
 	case "-V":
