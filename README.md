@@ -22,20 +22,27 @@
 
 ---
 ## Requirement
-* bash
+* bash or zsh
 * golang / go
 ``` bash
 sudo pacman -S go bash
 ```
 ## Installation
-Bash only:
+Bash:
 ``` bash
 git clone https://github.com/Kasper100/qpm.git
 mv qpm .qpm
 cd .qpm
-./install.sh
+./bashinstall.sh
 qpm -V
 ```
+Zsh:
+``` zsh
+git clone https://github.com/Kasper100/qpm.git
+mv qpm .qpm
+cd .qpm
+./zshinstall.sh
+qpm -V
 ---
 
 ## Usage
