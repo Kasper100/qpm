@@ -1,3 +1,3 @@
 echo 'export PATH="$HOME/.qpm:$PATH"' >> ~/.bashrc
 echo "Exported .qpm to PATH"
-./build.sh
+go build qpm.go
