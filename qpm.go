@@ -10,18 +10,19 @@ import (
 	"syscall"
 )
 
-var versionnumbers = "0.0.2"
-var versionname = "Bored" // random name related to how i felt
+var versionnumbers = "0.0.3"
+var versionname = "Bug" // random name related to how i felt programming this version
 var version = versionnumbers + " (" + versionname + ")"
 
 func showversion() {
-	banner := `
-.-----.-----.--------.
-|  _  |  _  |        |   ver: %s
-|__   |   __|__|__|__|
-   |__|__|            
-Quiet PacMan: Made for `
-	fmt.Printf(banner+"\x1b[4mminimalism\x1b[0m\n", version)
+	banner := "" +
+		"\033[1;40m.-----\033[36;40m.-----.--------.\033[0m\n" +
+		"\033[1;40m|  _  \033[36;40m|  _  |        |\033[0m   ver: %s\n" +
+		"\033[1;40m|__   \033[36;40m|   __|__|__|__|\033[0m\n" +
+		"\033[1;40m   |__\033[36;40m|__|            \033[0m\n" +
+		"Quiet PacMan: Made for \x1b[4mminimalism\x1b[0m\n"
+
+	fmt.Printf(banner, version)
 }
 
 func containsString(slice []string, value string) bool {
@@ -49,6 +50,10 @@ func usepac(paccmd string, pkgs []string, returnstr string, pkgmanager string, o
 		execCmd := exec.Command("yay", installpkgs...)
 		output, err := execCmd.CombinedOutput()
 		if err != nil {
+			if out == true {
+				fmt.Printf("Out: %s\n", string(output))
+			}
+
 			fmt.Printf("Error executing command: %s\n", err)
 			return
 		}
@@ -59,6 +64,9 @@ func usepac(paccmd string, pkgs []string, returnstr string, pkgmanager string, o
 		execCmd := exec.Command("sudo", installpkgs...)
 		output, err := execCmd.CombinedOutput()
 		if err != nil {
+			if out == true {
+				fmt.Printf("Out: %s\n", string(output))
+			}
 			fmt.Printf("Error executing command: %s\n", err)
 			return
 		}
@@ -97,24 +105,26 @@ func CreateQPMFile(pkgs []string, filename string) error {
 }
 
 func showhelp() {
-	fmt.Println("Usage: qpm [command] [packages]")
-	fmt.Println("Commands:")
-	fmt.Println("  -S <pkgs>     Install packages")
-	fmt.Println("  -R <pkgs>     Remove packages")
-	fmt.Println("  -U            Update system")
-	fmt.Println("  -? <query>    Search for packages")
-	fmt.Println("  -O            List all orphan packages")
-	fmt.Println("  -Q            List all installed packages")
-	fmt.Println("  -F            Download packages from a .qpm file")
-	fmt.Println("  -RF           Remove packages from a .qpm file")
-	fmt.Println("  -CF <pkgs>    Creates a .qpm from list packages")
-	fmt.Println("  -V            Shows qpm version")
-	fmt.Println("  -H            Show this help message")
-	fmt.Println("Options:")
-	fmt.Println("  --yay         Switches Package Manager from pacman to yay")
-	fmt.Println("  --out         Shows output, mostly used for debugging")
-}
+	// convert into one strin bro.
+	fmt.Println(`Usage: qpm [command] [packages]
+Commands:
+  -S <pkgs>     Install packages
+  -Rns <pkgs>   Remove packages, config and etc
+  -R <pkgs>     Remove packages
+  -U/-Syu       Update system
+  -? <query>    Search for packages
+  -O            List all orphan packages
+  -Q            List all installed packages
+  -F            Download packages from a .qpm file
+  -RF           Remove packages from a .qpm file
+  -CF <pkgs>    Creates a .qpm from list packages
+  -V            Shows qpm version
+  -H            Show this help message
 
+Options / Flags:
+  --yay         Switches Package Manager from pacman to yay
+  --out         Shows output, mostly used for debugging`)
+}
 func main() {
 	// Setup Ctrl+C handler
 	sigChan := make(chan os.Signal, 1)
@@ -182,6 +192,19 @@ func main() {
 			returnedstr = "\n\x1b[47;30mThe package is removed\x1b[0m"
 		}
 		fmt.Printf("Removing packages: %s\n", strings.Join(pkgs, ", "))
+		usepac("-R", pkgs, returnedstr, pkgmanager, showoutput)
+	case "-Rns":
+		if len(pkgs) == 0 {
+			fmt.Println("No packages provided. Please provide packages to remove.")
+			return
+		}
+		returnedstr := ""
+		if len(returnedstr) > 1 {
+			returnedstr = "\n\x1b[47;30mThe packages and configs are removed\x1b[0m"
+		} else {
+			returnedstr = "\n\x1b[47;30mThe package and config are removed\x1b[0m"
+		}
+		fmt.Printf("Removing packages and configs: %s\n", strings.Join(pkgs, ", "))
 		usepac("-Rns", pkgs, returnedstr, pkgmanager, showoutput)
 	case "-?":
 		// search for packages
@@ -199,6 +222,10 @@ func main() {
 		usepac("-Qdtq", []string{}, returnedstr, pkgmanager, true)
 	case "-U":
 		fmt.Println("Updating system...")
+		returnedstr := "\n\x1b[47;30mSystem updated\x1b[0m"
+		usepac("-Syu", []string{}, returnedstr, pkgmanager, showoutput)
+	case "-Syu":
+		fmt.Println("Updating syst:em...")
 		returnedstr := "\n\x1b[47;30mSystem updated\x1b[0m"
 		usepac("-Syu", []string{}, returnedstr, pkgmanager, showoutput)
 	case "-Q":
@@ -248,6 +275,27 @@ func main() {
 		filename := "qpmpackages.qpm"
 		CreateQPMFile(pkgs, filename)
 		fmt.Printf("\x1b[47;30mCreated .qpm file with packages: %s\x1b[0m\n", strings.Join(pkgs, ", "))
+	case "-LF":
+		if len(pkgs) == 0 {
+			fmt.Println("No packages provided. Please provide packages to list from a .qpm file")
+			return
+		}
+		file, err := os.Open(pkgs[0])
+		if err != nil {
+			fmt.Printf("Error opening file: %s\n", err)
+			return
+		}
+		defer file.Close()
+		TranslatedPKGS := TranslateFileToPKGS(file)
+		if len(TranslatedPKGS) == 0 {
+			fmt.Println("No packages found in the file.")
+			return
+		}
+		for _, pkg := range TranslatedPKGS {
+			fmt.Println(pkg)
+		}
+		return
+
 	case "-H":
 		showhelp()
 	case "-V":
