@@ -20,7 +20,7 @@ func showversion() {
 		"\033[1;40m|  _  \033[36;40m|  _  |        |\033[0m   ver: %s\n" +
 		"\033[1;40m|__   \033[36;40m|   __|__|__|__|\033[0m\n" +
 		"\033[1;40m   |__\033[36;40m|__|            \033[0m\n" +
-		"Quiet PacMan: Made for \x1b[4mminimalism\x1b[0m\n"
+		"Quiet PacMan: Made for \x1b[4mextreme minimalism\x1b[0m\n"
 
 	fmt.Printf(banner, version)
 }
