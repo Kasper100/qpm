@@ -30,6 +30,7 @@ sudo pacman -S go bash
 ## Installation
 Bash:
 ``` bash
+cd ~
 git clone https://github.com/Kasper100/qpm.git
 mv qpm .qpm
 cd .qpm
@@ -38,6 +39,7 @@ qpm -V
 ```
 Zsh:
 ``` zsh
+cd ~
 git clone https://github.com/Kasper100/qpm.git
 mv qpm .qpm
 cd .qpm
