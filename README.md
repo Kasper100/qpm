@@ -53,16 +53,20 @@ qpm -V
 qpm [command] [packages]
 ```
 
-### Commands
+### Commands [
 
 | Command     | Description                         |
 | ----------- | ----------------------------------- |
 | `-S <pkgs>` | Install packages                    |
+| `-Rns <pkgs>` | Remove packages, config and etc   |
 | `-R <pkgs>` | Remove packages                     |
 | `-U`        | Update system                       |
 | `-?`        | Search for packages                 |
+| `-O`        | List all orphan packages            |
+| `-Q`        | list all installed packages         |
 | `-F`        | Install packages from a `.qpm` file |
 | `-RF`       | Remove packages from a `.qpm` file  |
+| `-CF`        | Creates a .qpm from listed packages |
 | `-V`        | Show qpm version                    |
 | `-H`        | Show help message                   |
 
