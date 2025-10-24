@@ -117,7 +117,7 @@ Commands:
   -Q            List all installed packages
   -F            Download packages from a .qpm file
   -RF           Remove packages from a .qpm file
-  -CF <pkgs>    Creates a .qpm from list packages
+  -CF <pkgs>    Creates a .qpm from listed packages
   -V            Shows qpm version
   -H            Show this help message
 
